@@ -1,0 +1,31 @@
+
+
+services:
+  sd-webui:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: sd-webui:latest
+    container_name: stable-diffusion-webui
+
+    runtime: nvidia
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=compute,utility,video
+
+    ports:
+      - "7860:7860"
+
+    volumes:
+     - ./models:/webui/models
+     - ./outputs:/webui/outputs
+     - ./config:/webui/config
+     - ./extensions:/webui/extensions    
+     - ./embeddings:/webui/embeddings
+     
+      
+
+    restart: unless-stopped
+
+    command: >
+      python3 launch.py --listen --api --skip-torch-cuda-test --xformers --no-gradio-queue --enable-insecure-extension-access
